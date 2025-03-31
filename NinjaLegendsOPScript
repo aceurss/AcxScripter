@@ -1,130 +1,139 @@
---// Rayfield GUI Auto Farm Script for Ninja Legends
-local Rayfield = loadstring(game:HttpGet('https://raw.githubusercontent.com/shlexware/Rayfield/main/source'))()
-
+local Rayfield = loadstring(game:HttpGet("https://raw.githubusercontent.com/shlexware/Rayfield/main/source"))()
 local Window = Rayfield:CreateWindow({
-   Name = "AZX HUB",
-   LoadingTitle = "Loading GUI...",
-   LoadingSubtitle = "By AcxScripter",
-   ConfigurationSaving = {
-      Enabled = false,
-   },
-   Discord = {
-      Enabled = false,
-   },
+    Name = "Venture Hub",
+    LoadingTitle = "Loading...",
+    LoadingSubtitle = "by ScripterYowai",
+    ConfigurationSaving = { Enabled = false },
+    KeySystem = false
 })
 
 -- Main Tab
-local MainTab = Window:CreateTab("Main")
+local MainTab = Window:CreateTab("Main", 4483362458)
+local TeleportTab = Window:CreateTab("Teleport", 4483362458)
+local SettingsTab = Window:CreateTab("Settings", 4483362458)
 
+-- Auto Farming Features
 MainTab:CreateToggle({
-   Name = "Auto Sell",
-   CurrentValue = false,
-   Callback = function(Value)
-      getgenv().AutoSell = Value
-      while getgenv().AutoSell do
-         wait(1)
-         game:GetService("ReplicatedStorage").rEvents.sellNinjitsuRemote:InvokeServer()
-      end
-   end,
-})
-
-MainTab:CreateToggle({
-   Name = "Auto Full Sell",
-   CurrentValue = false,
-   Callback = function(Value)
-      getgenv().AutoFullSell = Value
-      while getgenv().AutoFullSell do
-         wait(1)
-         if game.Players.LocalPlayer.PlayerGui.MainGui.FullBelt.Visible then
-            game:GetService("ReplicatedStorage").rEvents.sellNinjitsuRemote:InvokeServer()
-         end
-      end
-   end,
-})
-
-MainTab:CreateToggle({
-   Name = "Auto Collect Coins",
-   CurrentValue = false,
-   Callback = function(Value)
-      getgenv().AutoCollectCoins = Value
-      while getgenv().AutoCollectCoins do
-         wait(1)
-         for _,v in pairs(game.Workspace:GetDescendants()) do
-            if v:IsA("TouchTransmitter") and v.Parent.Name == "Coin" then
-               firetouchinterest(game.Players.LocalPlayer.Character.Head, v.Parent, 0)
-               firetouchinterest(game.Players.LocalPlayer.Character.Head, v.Parent, 1)
+    Name = "Auto Swing",
+    CurrentValue = false,
+    Flag = "AutoSwing",
+    Callback = function(Value)
+        getgenv().autoswing = Value
+        while getgenv().autoswing do
+            local tool = game.Players.LocalPlayer.Character:FindFirstChildOfClass("Tool")
+            if tool then
+                tool:Activate()
             end
-         end
-      end
-   end,
+            task.wait(0.1)
+        end
+    end
+})
+
+MainTab:CreateToggle({
+    Name = "Auto Sell",
+    CurrentValue = false,
+    Flag = "AutoSell",
+    Callback = function(Value)
+        getgenv().autosell = Value
+        while getgenv().autosell do
+            game:GetService("ReplicatedStorage").RemoteEvent:FireServer("Sell")
+            task.wait(0.5)
+        end
+    end
+})
+
+MainTab:CreateToggle({
+    Name = "Auto Full Sell",
+    CurrentValue = false,
+    Flag = "AutoFullSell",
+    Callback = function(Value)
+        getgenv().autofullsell = Value
+        while getgenv().autofullsell do
+            if game.Players.LocalPlayer.leaderstats.Belt.Value >= game.Players.LocalPlayer.leaderstats.MaxBelt.Value then
+                game:GetService("ReplicatedStorage").RemoteEvent:FireServer("Sell")
+            end
+            task.wait(0.5)
+        end
+    end
+})
+
+MainTab:CreateToggle({
+    Name = "Auto Buy Swords",
+    CurrentValue = false,
+    Flag = "AutoBuySwords",
+    Callback = function(Value)
+        getgenv().autobuyswords = Value
+        while getgenv().autobuyswords do
+            game:GetService("ReplicatedStorage").BuyAll:FireServer("Swords")
+            task.wait(1)
+        end
+    end
+})
+
+MainTab:CreateToggle({
+    Name = "Auto Buy Belts",
+    CurrentValue = false,
+    Flag = "AutoBuyBelts",
+    Callback = function(Value)
+        getgenv().autobuybelts = Value
+        while getgenv().autobuybelts do
+            game:GetService("ReplicatedStorage").BuyAll:FireServer("Belts")
+            task.wait(1)
+        end
+    end
+})
+
+MainTab:CreateToggle({
+    Name = "Auto Buy Ranks",
+    CurrentValue = false,
+    Flag = "AutoBuyRanks",
+    Callback = function(Value)
+        getgenv().autobuyranks = Value
+        while getgenv().autobuyranks do
+            game:GetService("ReplicatedStorage").BuyAll:FireServer("Ranks")
+            task.wait(1)
+        end
+    end
+})
+
+MainTab:CreateToggle({
+    Name = "Auto Upgrade Skills",
+    CurrentValue = false,
+    Flag = "AutoUpgradeSkills",
+    Callback = function(Value)
+        getgenv().autoupgradeskills = Value
+        while getgenv().autoupgradeskills do
+            game:GetService("ReplicatedStorage").BuyAll:FireServer("Skills")
+            task.wait(1)
+        end
+    end
 })
 
 MainTab:CreateButton({
-   Name = "Unlock All Islands",
-   Callback = function()
-      for _,v in pairs(game.Workspace.islandUnlockParts:GetChildren()) do
-         game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = v.CFrame
-         wait(0.5)
-      end
-   end,
+    Name = "Unlock All Islands",
+    Callback = function()
+        for _, island in pairs(game.Workspace:GetChildren()) do
+            if island:IsA("Part") and island.Name:match("Island") then
+                game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = island.CFrame
+                task.wait(0.5)
+            end
+        end
+    end
 })
 
-MainTab:CreateDropdown({
-   Name = "Teleport to Island",
-   Options = {"Enchanted Island", "Astral Island", "Mystical Island", "Space Island"},
-   Callback = function(Selected)
-      for _,v in pairs(game.Workspace.islandUnlockParts:GetChildren()) do
-         if v.Name == Selected then
-            game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = v.CFrame
-         end
-      end
-   end,
+TeleportTab:CreateDropdown({
+    Name = "Teleport to Island",
+    Options = {"Island 1", "Island 2", "Island 3", "Island 4", "Island 5", "Island 6", "Island 7"},
+    CurrentOption = "Island 1",
+    Callback = function(Option)
+        for _, island in pairs(game.Workspace:GetChildren()) do
+            if island:IsA("Part") and island.Name == Option then
+                game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = island.CFrame
+            end
+        end
+    end
 })
 
-MainTab:CreateToggle({
-   Name = "Auto Buy Swords",
-   CurrentValue = false,
-   Callback = function(Value)
-      getgenv().AutoBuySwords = Value
-      while getgenv().AutoBuySwords do
-         wait(1)
-         game:GetService("ReplicatedStorage").rEvents.buyAllSwordsRemote:InvokeServer()
-      end
-   end,
-})
+SettingsTab:CreateParagraph({Title = "Welcome", Content = "Hey there, AcxScripter! Thank you for using my Script."})
 
-MainTab:CreateToggle({
-   Name = "Auto Buy Belts",
-   CurrentValue = false,
-   Callback = function(Value)
-      getgenv().AutoBuyBelts = Value
-      while getgenv().AutoBuyBelts do
-         wait(1)
-         game:GetService("ReplicatedStorage").rEvents.buyAllBeltsRemote:InvokeServer()
-      end
-   end,
-})
-
-MainTab:CreateToggle({
-   Name = "Auto Buy Ranks",
-   CurrentValue = false,
-   Callback = function(Value)
-      getgenv().AutoBuyRanks = Value
-      while getgenv().AutoBuyRanks do
-         wait(1)
-         game:GetService("ReplicatedStorage").rEvents.rankUpRemote:InvokeServer()
-      end
-   end,
-})
-
-MainTab:CreateToggle({
-   Name = "Auto Upgrade Skills",
-   CurrentValue = false,
-   Callback = function(Value)
-      getgenv().AutoUpgradeSkills = Value
-      while getgenv().AutoUpgradeSkills do
-         wait(1)
-         game:GetService("ReplicatedStorage").rEvents.buyAllSkillsRemote:InvokeServer()
-      end
-   end,
-})
+Rayfield:LoadConfiguration()
