@@ -1,0 +1,52 @@
+-- Ninja Legends Script (Custom Version Similar to Venture Hub)
+-- Made for execution in Roblox Executors like Synapse X or KRNL
+
+local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/bloodball/-back-ups-for-libs/main/wizard"))()
+local Window = Library:NewWindow("NJ Hub")
+local MainTab = Window:NewTab("Main")
+local MainSection = MainTab:NewSection("Auto Farm")
+
+-- Auto Swing
+local autoSwing = false
+MainSection:NewToggle("Auto Swing", "Automatically swings your weapon", function(state)
+    autoSwing = state
+    while autoSwing do
+        game:GetService("ReplicatedStorage").Events.Swing:FireServer()
+        wait(0.1)
+    end
+end)
+
+-- Auto Sell
+local autoSell = false
+MainSection:NewToggle("Auto Sell", "Automatically sells your coins", function(state)
+    autoSell = state
+    while autoSell do
+        local player = game.Players.LocalPlayer
+        player.Character.HumanoidRootPart.CFrame = game:GetService("Workspace").SellArea.CFrame
+        wait(1)
+    end
+end)
+
+-- Auto Collect Chests
+local autoChest = false
+MainSection:NewToggle("Auto Collect Chests", "Automatically collects all chests", function(state)
+    autoChest = state
+    while autoChest do
+        for _, v in pairs(game:GetService("Workspace").Chests:GetChildren()) do
+            game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = v.CFrame
+            wait(1)
+        end
+    end
+end)
+
+-- Auto Rank Up
+local autoRank = false
+MainSection:NewToggle("Auto Rank Up", "Automatically ranks up when possible", function(state)
+    autoRank = state
+    while autoRank do
+        game:GetService("ReplicatedStorage").Events.RankUp:FireServer()
+        wait(1)
+    end
+end)
+
+print("Custom Ninja Legends Script Loaded!")
