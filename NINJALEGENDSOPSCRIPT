@@ -1,0 +1,109 @@
+-- Roblox Auto Farm GUI Script
+
+local Library = loadstring(game:HttpGet("https://pastebin.com/raw/yourlibrarylink"))()
+local Window = Library.CreateLib("My Script", "DarkTheme")
+
+-- Home
+local HomeTab = Window:NewTab("Home")
+local HomeSection = HomeTab:NewSection("Welcome To My Script!")
+
+-- Main
+local MainTab = Window:NewTab("Main")
+local MainSection = MainTab:NewSection("Auto Farm Features")
+
+MainSection:NewToggle("Auto Sell", "Auto Sells All Ninjitsu", function(state)
+    if state then
+        print("Auto Sell Enabled")
+        -- Add Auto Sell functionality here
+    else
+        print("Auto Sell Disabled")
+    end
+end)
+
+MainSection:NewToggle("Auto Full Sell", "Auto Sells Only if Belt is Full", function(state)
+    if state then
+        print("Auto Full Sell Enabled")
+        -- Add Auto Full Sell functionality here
+    else
+        print("Auto Full Sell Disabled")
+    end
+end)
+
+MainSection:NewToggle("Auto Collect Coins", "Automatically collects coins", function(state)
+    if state then
+        print("Auto Collect Coins Enabled")
+        -- Add Auto Collect Coins functionality here
+    else
+        print("Auto Collect Coins Disabled")
+    end
+end)
+
+MainSection:NewToggle("Auto Collect Chi", "Automatically collects Chi", function(state)
+    if state then
+        print("Auto Collect Chi Enabled")
+        -- Add Auto Collect Chi functionality here
+    else
+        print("Auto Collect Chi Disabled")
+    end
+end)
+
+MainSection:NewToggle("Auto Buy Ranks", "Buys ranks automatically if coins are enough", function(state)
+    if state then
+        print("Auto Buy Ranks Enabled")
+        -- Add Auto Buy Ranks functionality here
+    else
+        print("Auto Buy Ranks Disabled")
+    end
+end)
+
+MainSection:NewToggle("Auto Buy Sword", "Buys swords automatically if coins are enough", function(state)
+    if state then
+        print("Auto Buy Sword Enabled")
+        -- Add Auto Buy Sword functionality here
+    else
+        print("Auto Buy Sword Disabled")
+    end
+end)
+
+MainSection:NewToggle("Auto Upgrade Skills", "Upgrades skills automatically if coins are enough", function(state)
+    if state then
+        print("Auto Upgrade Skills Enabled")
+        -- Add Auto Upgrade Skills functionality here
+    else
+        print("Auto Upgrade Skills Disabled")
+    end
+end)
+
+MainSection:NewToggle("Auto Buy Belts", "Buys belts automatically if coins are enough", function(state)
+    if state then
+        print("Auto Buy Belts Enabled")
+        -- Add Auto Buy Belts functionality here
+    else
+        print("Auto Buy Belts Disabled")
+    end
+end)
+
+-- Islands
+local IslandsTab = Window:NewTab("Islands")
+local IslandsSection = IslandsTab:NewSection("Teleport & Unlock")
+
+IslandsSection:NewButton("Unlock All Islands", "Unlocks all islands in one click", function()
+    print("Unlocking all islands...")
+    -- Add Unlock All Islands functionality here
+end)
+
+IslandsSection:NewDropdown("Teleport to Island", {"Island 1", "Island 2", "Island 3", "Island 4", "Island 5", "Island 6", "Island 7"}, function(selected)
+    print("Teleporting to " .. selected)
+    -- Add Teleport functionality here
+end)
+
+-- Settings
+local SettingsTab = Window:NewTab("Settings")
+local SettingsSection = SettingsTab:NewSection("Customize GUI")
+
+SettingsSection:NewColorPicker("GUI Color", "Change the GUI theme color", Color3.fromRGB(255, 255, 255), function(color)
+    print("GUI Color changed")
+    -- Add GUI customization functionality here
+end)
+
+print("GUI Loaded Successfully!")
