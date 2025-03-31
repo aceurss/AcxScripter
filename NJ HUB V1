@@ -1,0 +1,71 @@
+-- Ninja Legends Script (Orion UI for CodeX Android)
+-- Uses a modern, mobile-friendly UI for better compatibility
+
+local OrionLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/shlexware/Orion/main/source"))()
+
+local Window = OrionLib:MakeWindow({Name = "Ninja Legends Hub", HidePremium = false, SaveConfig = true, ConfigFolder = "NinjaLegends"})
+
+local MainTab = Window:MakeTab({Name = "Main", Icon = "rbxassetid://4483345998", PremiumOnly = false})
+
+-- Auto Swing
+local autoSwing = false
+MainTab:AddToggle({
+    Name = "Auto Swing",
+    Default = false,
+    Callback = function(state)
+        autoSwing = state
+        while autoSwing do
+            game:GetService("ReplicatedStorage").Events.Swing:FireServer()
+            wait(0.1)
+        end
+    end
+})
+
+-- Auto Sell
+local autoSell = false
+MainTab:AddToggle({
+    Name = "Auto Sell",
+    Default = false,
+    Callback = function(state)
+        autoSell = state
+        while autoSell do
+            local player = game.Players.LocalPlayer
+            player.Character.HumanoidRootPart.CFrame = game:GetService("Workspace").SellArea.CFrame
+            wait(1)
+        end
+    end
+})
+
+-- Auto Collect Chests
+local autoChest = false
+MainTab:AddToggle({
+    Name = "Auto Collect Chests",
+    Default = false,
+    Callback = function(state)
+        autoChest = state
+        while autoChest do
+            for _, v in pairs(game:GetService("Workspace").Chests:GetChildren()) do
+                game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = v.CFrame
+                wait(1)
+            end
+        end
+    end
+})
+
+-- Auto Rank Up
+local autoRank = false
+MainTab:AddToggle({
+    Name = "Auto Rank Up",
+    Default = false,
+    Callback = function(state)
+        autoRank = state
+        while autoRank do
+            game:GetService("ReplicatedStorage").Events.RankUp:FireServer()
+            wait(1)
+        end
+    end
+})
+
+OrionLib:Init()
+
+print("Ninja Legends Custom GUI (Orion UI) Loaded!")
