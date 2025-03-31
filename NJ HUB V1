@@ -1,71 +1,70 @@
--- Ninja Legends Script (Orion UI for CodeX Android)
--- Uses a modern, mobile-friendly UI for better compatibility
+-- Simple GUI Script for Ninja Legends (Works on CodeX Android)
+-- No external UI library needed, fully offline
 
-local OrionLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/shlexware/Orion/main/source"))()
+local ScreenGui = Instance.new("ScreenGui")
+local Frame = Instance.new("Frame")
+local UIListLayout = Instance.new("UIListLayout")
 
-local Window = OrionLib:MakeWindow({Name = "Ninja Legends Hub", HidePremium = false, SaveConfig = true, ConfigFolder = "NinjaLegends"})
+-- Setup GUI
+ScreenGui.Parent = game.CoreGui
+Frame.Parent = ScreenGui
+Frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+Frame.Position = UDim2.new(0.1, 0, 0.1, 0)
+Frame.Size = UDim2.new(0, 200, 0, 300)
+UIListLayout.Parent = Frame
 
-local MainTab = Window:MakeTab({Name = "Main", Icon = "rbxassetid://4483345998", PremiumOnly = false})
+-- Function to create buttons
+local function CreateButton(name, callback)
+    local Button = Instance.new("TextButton")
+    Button.Parent = Frame
+    Button.Size = UDim2.new(1, 0, 0, 50)
+    Button.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    Button.TextColor3 = Color3.fromRGB(255, 255, 255)
+    Button.Text = name
+    Button.MouseButton1Click:Connect(callback)
+end
 
 -- Auto Swing
 local autoSwing = false
-MainTab:AddToggle({
-    Name = "Auto Swing",
-    Default = false,
-    Callback = function(state)
-        autoSwing = state
-        while autoSwing do
-            game:GetService("ReplicatedStorage").Events.Swing:FireServer()
-            wait(0.1)
-        end
+CreateButton("Toggle Auto Swing", function()
+    autoSwing = not autoSwing
+    while autoSwing do
+        game:GetService("ReplicatedStorage").Events.Swing:FireServer()
+        wait(0.1)
     end
-})
+end)
 
 -- Auto Sell
 local autoSell = false
-MainTab:AddToggle({
-    Name = "Auto Sell",
-    Default = false,
-    Callback = function(state)
-        autoSell = state
-        while autoSell do
-            local player = game.Players.LocalPlayer
-            player.Character.HumanoidRootPart.CFrame = game:GetService("Workspace").SellArea.CFrame
-            wait(1)
-        end
+CreateButton("Toggle Auto Sell", function()
+    autoSell = not autoSell
+    while autoSell do
+        local player = game.Players.LocalPlayer
+        player.Character.HumanoidRootPart.CFrame = game:GetService("Workspace").SellArea.CFrame
+        wait(1)
     end
-})
+end)
 
 -- Auto Collect Chests
 local autoChest = false
-MainTab:AddToggle({
-    Name = "Auto Collect Chests",
-    Default = false,
-    Callback = function(state)
-        autoChest = state
-        while autoChest do
-            for _, v in pairs(game:GetService("Workspace").Chests:GetChildren()) do
-                game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = v.CFrame
-                wait(1)
-            end
-        end
-    end
-})
-
--- Auto Rank Up
-local autoRank = false
-MainTab:AddToggle({
-    Name = "Auto Rank Up",
-    Default = false,
-    Callback = function(state)
-        autoRank = state
-        while autoRank do
-            game:GetService("ReplicatedStorage").Events.RankUp:FireServer()
+CreateButton("Toggle Auto Chests", function()
+    autoChest = not autoChest
+    while autoChest do
+        for _, v in pairs(game:GetService("Workspace").Chests:GetChildren()) do
+            game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = v.CFrame
             wait(1)
         end
     end
-})
+end)
 
-OrionLib:Init()
+-- Auto Rank Up
+local autoRank = false
+CreateButton("Toggle Auto Rank Up", function()
+    autoRank = not autoRank
+    while autoRank do
+        game:GetService("ReplicatedStorage").Events.RankUp:FireServer()
+        wait(1)
+    end
+end)
 
-print("Ninja Legends Custom GUI (Orion UI) Loaded!")
+print("Simple Ninja Legends GUI Loaded!")
