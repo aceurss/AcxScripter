@@ -1,14 +1,15 @@
--- Ninja Legends Script (Custom Version Similar to Venture Hub)
--- Made for execution in Roblox Executors like Synapse X or KRNL
+-- Ninja Legends Script (Modern UI for CodeX Android)
+-- Uses a lightweight modern UI for compatibility
 
-local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/bloodball/-back-ups-for-libs/main/wizard"))()
-local Window = Library:NewWindow("NJ Hub")
+local Library = loadstring(game:HttpGet("https://pastebin.com/raw/1rDd92Zh"))() -- Kavo UI (Lightweight)
+local Window = Library.CreateLib("Ninja Legends Hub", "DarkTheme")
+
 local MainTab = Window:NewTab("Main")
 local MainSection = MainTab:NewSection("Auto Farm")
 
 -- Auto Swing
 local autoSwing = false
-MainSection:NewToggle("Auto Swing", "Automatically swings your weapon", function(state)
+MainSection:NewToggle("Auto Swing", "Automatically swings weapon", function(state)
     autoSwing = state
     while autoSwing do
         game:GetService("ReplicatedStorage").Events.Swing:FireServer()
@@ -18,7 +19,7 @@ end)
 
 -- Auto Sell
 local autoSell = false
-MainSection:NewToggle("Auto Sell", "Automatically sells your coins", function(state)
+MainSection:NewToggle("Auto Sell", "Automatically sells Ninjitsu", function(state)
     autoSell = state
     while autoSell do
         local player = game.Players.LocalPlayer
@@ -29,7 +30,7 @@ end)
 
 -- Auto Collect Chests
 local autoChest = false
-MainSection:NewToggle("Auto Collect Chests", "Automatically collects all chests", function(state)
+MainSection:NewToggle("Auto Collect Chests", "Automatically collects chests", function(state)
     autoChest = state
     while autoChest do
         for _, v in pairs(game:GetService("Workspace").Chests:GetChildren()) do
@@ -41,7 +42,7 @@ end)
 
 -- Auto Rank Up
 local autoRank = false
-MainSection:NewToggle("Auto Rank Up", "Automatically ranks up when possible", function(state)
+MainSection:NewToggle("Auto Rank Up", "Automatically ranks up", function(state)
     autoRank = state
     while autoRank do
         game:GetService("ReplicatedStorage").Events.RankUp:FireServer()
@@ -49,4 +50,4 @@ MainSection:NewToggle("Auto Rank Up", "Automatically ranks up when possible", fu
     end
 end)
 
-print("Custom Ninja Legends Script Loaded!")
+print("Ninja Legends Custom GUI (Kavo UI) Loaded!")
