@@ -1,7 +1,7 @@
 local Rayfield = loadstring(game:HttpGet('https://raw.githubusercontent.com/shlexware/Rayfield/main/source'))()
 
 local Window = Rayfield:CreateWindow({
-    Name = "AcxScripter Hub",
+    Name = "AZX HUB",
     LoadingTitle = "AcxScripter",
     LoadingSubtitle = "Ninja Legends GUI",
     ConfigurationSaving = {
@@ -17,101 +17,73 @@ local Window = Rayfield:CreateWindow({
     KeySystem = false 
 })
 
+-- Home Tab
+local HomeTab = Window:CreateTab("Home", 4483362458)
+HomeTab:CreateSection("Welcome, AcxScripter!")
+
 -- Main Tab
 local MainTab = Window:CreateTab("Main", 4483362458)
 
-local AutoSell = MainTab:CreateToggle({
+local function toggleAutoSell(state)
+    getgenv().AutoSell = state
+    while getgenv().AutoSell do
+        game:GetService("ReplicatedStorage").rEvents.sellNinjitsuEvent:FireServer()
+        wait(1)
+    end
+end
+
+MainTab:CreateToggle({
     Name = "Auto Sell",
     CurrentValue = false,
-    Flag = "AutoSell",
     Callback = function(Value)
-        getgenv().AutoSell = Value
-        while getgenv().AutoSell do
-            game:GetService("ReplicatedStorage").rEvents.sellNinjitsuEvent:FireServer()
-            wait(1)
-        end
+        toggleAutoSell(Value)
     end
 })
 
-local AutoFullSell = MainTab:CreateToggle({
-    Name = "Auto Full Sell",
-    CurrentValue = false,
-    Flag = "AutoFullSell",
-    Callback = function(Value)
-        getgenv().AutoFullSell = Value
-        while getgenv().AutoFullSell do
-            if game.Players.LocalPlayer.Character.Belt.Value >= game.Players.LocalPlayer.Character.Belt.MaxValue then
-                game:GetService("ReplicatedStorage").rEvents.sellNinjitsuEvent:FireServer()
+local function toggleAutoCollectCoins(state)
+    getgenv().AutoCollectCoins = state
+    while getgenv().AutoCollectCoins do
+        for _, coin in pairs(game.Workspace:GetChildren()) do
+            if coin:IsA("Model") and coin:FindFirstChild("TouchInterest") then
+                firetouchinterest(game.Players.LocalPlayer.Character.HumanoidRootPart, coin, 0)
+                firetouchinterest(game.Players.LocalPlayer.Character.HumanoidRootPart, coin, 1)
             end
-            wait(1)
         end
+        wait(0.5)
     end
-})
+end
 
-local AutoCollectCoins = MainTab:CreateToggle({
+MainTab:CreateToggle({
     Name = "Auto Collect Coins",
     CurrentValue = false,
-    Flag = "AutoCollectCoins",
     Callback = function(Value)
-        getgenv().AutoCollectCoins = Value
-        while getgenv().AutoCollectCoins do
-            for _, coin in pairs(game.Workspace:GetChildren()) do
-                if coin:IsA("Model") and coin:FindFirstChild("TouchInterest") then
-                    firetouchinterest(game.Players.LocalPlayer.Character.HumanoidRootPart, coin, 0)
-                    firetouchinterest(game.Players.LocalPlayer.Character.HumanoidRootPart, coin, 1)
-                end
-            end
-            wait(0.5)
-        end
+        toggleAutoCollectCoins(Value)
     end
 })
 
 -- Auto Buy Features
 local AutoBuyTab = Window:CreateTab("Auto Buy", 4483362458)
 
-local AutoBuyRanks = AutoBuyTab:CreateToggle({
+local function toggleAutoBuyRanks(state)
+    getgenv().AutoBuyRanks = state
+    while getgenv().AutoBuyRanks do
+        game:GetService("ReplicatedStorage").rEvents.rankUpEvent:FireServer()
+        wait(2)
+    end
+end
+
+AutoBuyTab:CreateToggle({
     Name = "Auto Buy Ranks",
     CurrentValue = false,
-    Flag = "AutoBuyRanks",
     Callback = function(Value)
-        getgenv().AutoBuyRanks = Value
-        while getgenv().AutoBuyRanks do
-            game:GetService("ReplicatedStorage").rEvents.rankUpEvent:FireServer()
-            wait(2)
-        end
-    end
-})
-
-local AutoBuySwords = AutoBuyTab:CreateToggle({
-    Name = "Auto Buy Swords",
-    CurrentValue = false,
-    Flag = "AutoBuySwords",
-    Callback = function(Value)
-        getgenv().AutoBuySwords = Value
-        while getgenv().AutoBuySwords do
-            game:GetService("ReplicatedStorage").rEvents.buyAllSwordsRemote:FireServer("Ground")
-            wait(2)
-        end
-    end
-})
-
-local AutoBuyBelts = AutoBuyTab:CreateToggle({
-    Name = "Auto Buy Belts",
-    CurrentValue = false,
-    Flag = "AutoBuyBelts",
-    Callback = function(Value)
-        getgenv().AutoBuyBelts = Value
-        while getgenv().AutoBuyBelts do
-            game:GetService("ReplicatedStorage").rEvents.buyAllBeltsRemote:FireServer("Ground")
-            wait(2)
-        end
+        toggleAutoBuyRanks(Value)
     end
 })
 
 -- Teleport Tab
 local TeleportTab = Window:CreateTab("Teleports", 4483362458)
 
-local UnlockAllIslands = TeleportTab:CreateButton({
+TeleportTab:CreateButton({
     Name = "Unlock All Islands",
     Callback = function()
         for _, v in pairs(game:GetService("Workspace").islandUnlockParts:GetChildren()) do
