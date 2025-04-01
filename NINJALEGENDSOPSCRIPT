@@ -1,109 +1,433 @@
--- Roblox Auto Farm GUI Script
+-- Load Orion UI Library
+local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/Seven7-lua/Roblox/refs/heads/main/Librarys/Orion/Orion.lua')))()
 
-local Library = loadstring(game:HttpGet("https://pastebin.com/raw/yourlibrarylink"))()
-local Window = Library.CreateLib("My Script", "DarkTheme")
+-- Create Window
+local Window = OrionLib:MakeWindow({
+    Name = "Ninja Legends Auto Farm",
+    HidePremium = false,
+    SaveConfig = true,
+    ConfigFolder = "OrionConfig"
+})
 
--- Home
-local HomeTab = Window:NewTab("Home")
-local HomeSection = HomeTab:NewSection("Welcome To My Script!")
+-- Create Main Tab
+local Tab = Window:MakeTab({
+    Name = "Main",
+    Icon = "rbxassetid://4483345998",
+    PremiumOnly = false
+})
 
--- Main
-local MainTab = Window:NewTab("Main")
-local MainSection = MainTab:NewSection("Auto Farm Features")
+-- Notification Example
+OrionLib:MakeNotification({
+    Name = "Welcome!",
+    Content = "UI Loaded Successfully",
+    Image = "rbxassetid://4483345998",
+    Time = 3
+})
 
-MainSection:NewToggle("Auto Sell", "Auto Sells All Ninjitsu", function(state)
-    if state then
-        print("Auto Sell Enabled")
-        -- Add Auto Sell functionality here
-    else
-        print("Auto Sell Disabled")
+-- Variables for locations and settings
+local sellLocation = game.Workspace.SellNinjitsu -- Adjust this location if needed
+local islandsFolder = game.Workspace.Islands -- Folder containing the islands
+local player = game.Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
+local backpack = player.Backpack
+
+-- Add Buttons and Toggles to Orion UI
+
+-- Auto Sell Button
+Tab:AddButton({
+    Name = "Auto Sell",
+    Callback = function()
+        -- Function to teleport to Sell Ninjitsu location
+        local function teleportToSell()
+            if sellLocation then
+                humanoidRootPart.CFrame = sellLocation.CFrame
+            end
+        end
+
+        -- Function to Auto Sell (simulate clicking the sell button)
+        local function autoSell()
+            teleportToSell()
+            while true do
+                -- Assuming there's a ClickDetector in SellNinjitsu object for selling
+                local sellButton = sellLocation:FindFirstChild("ClickDetector")
+                if sellButton then
+                    -- Simulate click to sell
+                    fireclickdetector(sellButton)
+                end
+                wait(0.1) -- Faster selling loop (reduce this to increase speed)
+            end
+        end
+
+        -- Start Auto Sell
+        autoSell()
+    end    
+})
+
+-- Auto Swing Sword Button
+Tab:AddButton({
+    Name = "Auto Swing Sword",
+    Callback = function()
+        -- Function to Auto Swing Sword
+        local function autoSwingSword()
+            while true do
+                -- Check if the player has a sword (Tool)
+                local sword = backpack:FindFirstChild("Sword") -- Change "Sword" to the actual name of the player's sword tool
+                if sword and sword:IsA("Tool") then
+                    -- Simulate swing by activating the sword tool
+                    sword:Activate() -- This will trigger the tool's activation (swinging)
+                end
+                wait(0.1) -- Faster swing interval (reduce this to increase swing speed)
+            end
+        end
+
+        -- Start Auto Swing Sword
+        autoSwingSword()
+    end    
+})
+
+-- Island Teleportation
+Tab:AddDropdown({
+    Name = "Select Island",
+    Options = { "Island 1", "Island 2", "Island 3" }, -- Add as many islands as necessary
+    Default = "Island 1",
+    Callback = function(option)
+        local island = islandsFolder:FindFirstChild(option)
+        if island then
+            humanoidRootPart.CFrame = island.PrimaryPart.CFrame
+        end
     end
-end)
+})
 
-MainSection:NewToggle("Auto Full Sell", "Auto Sells Only if Belt is Full", function(state)
-    if state then
-        print("Auto Full Sell Enabled")
-        -- Add Auto Full Sell functionality here
-    else
-        print("Auto Full Sell Disabled")
+-- Misc Features: Infinite Yield, Unlimited Jump, Speed Boost
+Tab:AddToggle({
+    Name = "Infinite Yield",
+    Default = false,
+    Callback = function(state)
+        if state then
+            while true do
+                game:GetService("ReplicatedStorage").Events.Yield:FireServer()
+                wait(0.5)
+            end
+        end
     end
-end)
+})
 
-MainSection:NewToggle("Auto Collect Coins", "Automatically collects coins", function(state)
-    if state then
-        print("Auto Collect Coins Enabled")
-        -- Add Auto Collect Coins functionality here
-    else
-        print("Auto Collect Coins Disabled")
+Tab:AddToggle({
+    Name = "Unlimited Jump",
+    Default = false,
+    Callback = function(state)
+        if state then
+            while true do
+                character.Humanoid.JumpHeight = math.huge
+                wait(0.5)
+            end
+        end
     end
-end)
+})
 
-MainSection:NewToggle("Auto Collect Chi", "Automatically collects Chi", function(state)
-    if state then
-        print("Auto Collect Chi Enabled")
-        -- Add Auto Collect Chi functionality here
-    else
-        print("Auto Collect Chi Disabled")
+Tab:AddToggle({
+    Name = "Speed Boost",
+    Default = false,
+    Callback = function(state)
+        if state then
+            while true do
+                character.Humanoid.WalkSpeed = 100
+                wait(0.5)
+            end
+        end
     end
+})
+
+-- Auto Buy Features
+Tab:AddButton({
+    Name = "Auto Buy Rank",
+    Callback = function()
+        local function autoBuyNewRank()
+            while true do
+                if game.Players.LocalPlayer.PlayerStats.Rank < 10 then
+                    game:GetService("ReplicatedStorage").Events.BuyRank:FireServer()
+                end
+                wait(5)
+            end
+        end
+
+        -- Start Auto Buy Rank
+        autoBuyNewRank()
+    end    
+})
+
+Tab:AddButton({
+    Name = "Auto Buy Belt",
+    Callback = function()
+        local function autoBuyNewBelt()
+            while true do
+                if game.Players.LocalPlayer.PlayerStats.Belt < 5 then
+                    game:GetService("ReplicatedStorage").Events.BuyBelt:FireServer()
+                end
+                wait(5)
+            end
+        end
+
+        -- Start Auto Buy Belt
+        autoBuyNewBelt()
+    end    
+})
+
+Tab:AddButton({
+    Name = "Auto Upgrade Skills",
+    Callback = function()
+        local function autoSkillsUpgrade()
+            while true do
+                game:GetService("ReplicatedStorage").Events.UpgradeSkills:FireServer()
+                wait(3)
+            end
+        end
+
+        -- Start Auto Skills Upgrade
+        autoSkillsUpgrade()
+    end    
+})
+
+-- Toggle UI Button
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "ToggleUI"
+ScreenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+ScreenGui.ResetOnSpawn = false
+
+local Toggle = Instance.new("TextButton")
+Toggle.Name = "Toggle"
+Toggle.Parent = ScreenGui
+Toggle.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+Toggle.BackgroundTransparency = 0.5
+Toggle.Position = UDim2.new(0, 0, 0.45, 0)
+Toggle.Size = UDim2.new(0, 50, 0, 50)
+Toggle.Draggable = true
+Toggle.Text = "UI"
+
+local Corner = Instance.new("UICorner")
+Corner.CornerRadius = UDim.new(0.2, 0)
+Corner.Parent = Toggle
+
+Toggle.MouseButton1Click:Connect(function()
+    OrionLib:ToggleUi()
 end)
 
-MainSection:NewToggle("Auto Buy Ranks", "Buys ranks automatically if coins are enough", function(state)
-    if state then
-        print("Auto Buy Ranks Enabled")
-        -- Add Auto Buy Ranks functionality here
-    else
-        print("Auto Buy Ranks Disabled")
+-- Initialize Orion UI
+OrionLib:Init()-- Load Orion UI Library
+local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/Seven7-lua/Roblox/refs/heads/main/Librarys/Orion/Orion.lua')))()
+
+-- Create Window
+local Window = OrionLib:MakeWindow({
+    Name = "Ninja Legends Auto Farm",
+    HidePremium = false,
+    SaveConfig = true,
+    ConfigFolder = "OrionConfig"
+})
+
+-- Create Main Tab
+local Tab = Window:MakeTab({
+    Name = "Main",
+    Icon = "rbxassetid://4483345998",
+    PremiumOnly = false
+})
+
+-- Notification Example
+OrionLib:MakeNotification({
+    Name = "Welcome!",
+    Content = "UI Loaded Successfully",
+    Image = "rbxassetid://4483345998",
+    Time = 3
+})
+
+-- Variables for locations and settings
+local sellLocation = game.Workspace.SellNinjitsu -- Adjust this location if needed
+local islandsFolder = game.Workspace.Islands -- Folder containing the islands
+local player = game.Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
+local backpack = player.Backpack
+
+-- Add Buttons and Toggles to Orion UI
+
+-- Auto Sell Button
+Tab:AddButton({
+    Name = "Auto Sell",
+    Callback = function()
+        -- Function to teleport to Sell Ninjitsu location
+        local function teleportToSell()
+            if sellLocation then
+                humanoidRootPart.CFrame = sellLocation.CFrame
+            end
+        end
+
+        -- Function to Auto Sell (simulate clicking the sell button)
+        local function autoSell()
+            teleportToSell()
+            while true do
+                -- Assuming there's a ClickDetector in SellNinjitsu object for selling
+                local sellButton = sellLocation:FindFirstChild("ClickDetector")
+                if sellButton then
+                    -- Simulate click to sell
+                    fireclickdetector(sellButton)
+                end
+                wait(0.1) -- Faster selling loop (reduce this to increase speed)
+            end
+        end
+
+        -- Start Auto Sell
+        autoSell()
+    end    
+})
+
+-- Auto Swing Sword Button
+Tab:AddButton({
+    Name = "Auto Swing Sword",
+    Callback = function()
+        -- Function to Auto Swing Sword
+        local function autoSwingSword()
+            while true do
+                -- Check if the player has a sword (Tool)
+                local sword = backpack:FindFirstChild("Sword") -- Change "Sword" to the actual name of the player's sword tool
+                if sword and sword:IsA("Tool") then
+                    -- Simulate swing by activating the sword tool
+                    sword:Activate() -- This will trigger the tool's activation (swinging)
+                end
+                wait(0.1) -- Faster swing interval (reduce this to increase swing speed)
+            end
+        end
+
+        -- Start Auto Swing Sword
+        autoSwingSword()
+    end    
+})
+
+-- Island Teleportation
+Tab:AddDropdown({
+    Name = "Select Island",
+    Options = { "Island 1", "Island 2", "Island 3" }, -- Add as many islands as necessary
+    Default = "Island 1",
+    Callback = function(option)
+        local island = islandsFolder:FindFirstChild(option)
+        if island then
+            humanoidRootPart.CFrame = island.PrimaryPart.CFrame
+        end
     end
-end)
+})
 
-MainSection:NewToggle("Auto Buy Sword", "Buys swords automatically if coins are enough", function(state)
-    if state then
-        print("Auto Buy Sword Enabled")
-        -- Add Auto Buy Sword functionality here
-    else
-        print("Auto Buy Sword Disabled")
+-- Misc Features: Infinite Yield, Unlimited Jump, Speed Boost
+Tab:AddToggle({
+    Name = "Infinite Yield",
+    Default = false,
+    Callback = function(state)
+        if state then
+            while true do
+                game:GetService("ReplicatedStorage").Events.Yield:FireServer()
+                wait(0.5)
+            end
+        end
     end
-end)
+})
 
-MainSection:NewToggle("Auto Upgrade Skills", "Upgrades skills automatically if coins are enough", function(state)
-    if state then
-        print("Auto Upgrade Skills Enabled")
-        -- Add Auto Upgrade Skills functionality here
-    else
-        print("Auto Upgrade Skills Disabled")
+Tab:AddToggle({
+    Name = "Unlimited Jump",
+    Default = false,
+    Callback = function(state)
+        if state then
+            while true do
+                character.Humanoid.JumpHeight = math.huge
+                wait(0.5)
+            end
+        end
     end
-end)
+})
 
-MainSection:NewToggle("Auto Buy Belts", "Buys belts automatically if coins are enough", function(state)
-    if state then
-        print("Auto Buy Belts Enabled")
-        -- Add Auto Buy Belts functionality here
-    else
-        print("Auto Buy Belts Disabled")
+Tab:AddToggle({
+    Name = "Speed Boost",
+    Default = false,
+    Callback = function(state)
+        if state then
+            while true do
+                character.Humanoid.WalkSpeed = 100
+                wait(0.5)
+            end
+        end
     end
+})
+
+-- Auto Buy Features
+Tab:AddButton({
+    Name = "Auto Buy Rank",
+    Callback = function()
+        local function autoBuyNewRank()
+            while true do
+                if game.Players.LocalPlayer.PlayerStats.Rank < 10 then
+                    game:GetService("ReplicatedStorage").Events.BuyRank:FireServer()
+                end
+                wait(5)
+            end
+        end
+
+        -- Start Auto Buy Rank
+        autoBuyNewRank()
+    end    
+})
+
+Tab:AddButton({
+    Name = "Auto Buy Belt",
+    Callback = function()
+        local function autoBuyNewBelt()
+            while true do
+                if game.Players.LocalPlayer.PlayerStats.Belt < 5 then
+                    game:GetService("ReplicatedStorage").Events.BuyBelt:FireServer()
+                end
+                wait(5)
+            end
+        end
+
+        -- Start Auto Buy Belt
+        autoBuyNewBelt()
+    end    
+})
+
+Tab:AddButton({
+    Name = "Auto Upgrade Skills",
+    Callback = function()
+        local function autoSkillsUpgrade()
+            while true do
+                game:GetService("ReplicatedStorage").Events.UpgradeSkills:FireServer()
+                wait(3)
+            end
+        end
+
+        -- Start Auto Skills Upgrade
+        autoSkillsUpgrade()
+    end    
+})
+
+-- Toggle UI Button
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "ToggleUI"
+ScreenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+ScreenGui.ResetOnSpawn = false
+
+local Toggle = Instance.new("TextButton")
+Toggle.Name = "Toggle"
+Toggle.Parent = ScreenGui
+Toggle.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+Toggle.BackgroundTransparency = 0.5
+Toggle.Position = UDim2.new(0, 0, 0.45, 0)
+Toggle.Size = UDim2.new(0, 50, 0, 50)
+Toggle.Draggable = true
+Toggle.Text = "UI"
+
+local Corner = Instance.new("UICorner")
+Corner.CornerRadius = UDim.new(0.2, 0)
+Corner.Parent = Toggle
+
+Toggle.MouseButton1Click:Connect(function()
+    OrionLib:ToggleUi()
 end)
 
--- Islands
-local IslandsTab = Window:NewTab("Islands")
-local IslandsSection = IslandsTab:NewSection("Teleport & Unlock")
-
-IslandsSection:NewButton("Unlock All Islands", "Unlocks all islands in one click", function()
-    print("Unlocking all islands...")
-    -- Add Unlock All Islands functionality here
-end)
-
-IslandsSection:NewDropdown("Teleport to Island", {"Island 1", "Island 2", "Island 3", "Island 4", "Island 5", "Island 6", "Island 7"}, function(selected)
-    print("Teleporting to " .. selected)
-    -- Add Teleport functionality here
-end)
-
--- Settings
-local SettingsTab = Window:NewTab("Settings")
-local SettingsSection = SettingsTab:NewSection("Customize GUI")
-
-SettingsSection:NewColorPicker("GUI Color", "Change the GUI theme color", Color3.fromRGB(255, 255, 255), function(color)
-    print("GUI Color changed")
-    -- Add GUI customization functionality here
-end)
-
-print("GUI Loaded Successfully!")
+-- Initialize Orion UI
+OrionLib:Init()
