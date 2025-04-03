@@ -1,0 +1,190 @@
+-- Load Orion UI Library
+local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/Seven7-lua/Roblox/refs/heads/main/Librarys/Orion/Orion.lua')))()
+
+-- Create Window
+local Window = OrionLib:MakeWindow({
+    Name = "Cheese Escape Script",
+    HidePremium = false,
+    SaveConfig = true,
+    ConfigFolder = "OrionConfig"
+})
+
+-- Create Home Tab
+local HomeTab = Window:MakeTab({
+    Name = "Home",
+    Icon = "rbxassetid://4483345998",
+    PremiumOnly = false
+})
+
+-- Notification Example for Home
+OrionLib:MakeNotification({
+    Name = "Welcome!",
+    Content = "Thank you for using my script! - AcxScripter",
+    Image = "rbxassetid://4483345998",
+    Time = 5
+})
+
+-- Add a Thank You Message on the Home Tab
+HomeTab:AddLabel("Welcome to the script!")
+HomeTab:AddLabel("Thank you for using my script! - AcxScripter")
+
+-- Create Main Tab
+local MainTab = Window:MakeTab({
+    Name = "Main",
+    Icon = "rbxassetid://4483345998",
+    PremiumOnly = false
+})
+
+-- Full Brightness Button
+MainTab:AddButton({
+    Name = "Full Brightness",
+    Callback = function()
+        game.Lighting.Brightness = 10
+        game.Lighting.OutdoorAmbient = Color3.fromRGB(255, 255, 255)
+        game.Lighting.Ambient = Color3.fromRGB(255, 255, 255)
+    end
+})
+
+-- Walkspeed Slider
+MainTab:AddSlider({
+    Name = "Walkspeed",
+    Min = 16,
+    Max = 500,
+    Default = 16,
+    Increment = 1,
+    Callback = function(value)
+        local player = game.Players.LocalPlayer
+        local character = player.Character or player.CharacterAdded:Wait()
+        local humanoid = character:WaitForChild("Humanoid")
+        humanoid.WalkSpeed = value
+    end
+})
+
+-- Jumpboost Slider
+MainTab:AddSlider({
+    Name = "Jumpboost",
+    Min = 50,
+    Max = 300,
+    Default = 50,
+    Increment = 5,
+    Callback = function(value)
+        local player = game.Players.LocalPlayer
+        local character = player.Character or player.CharacterAdded:Wait()
+        local humanoid = character:WaitForChild("Humanoid")
+        humanoid.JumpHeight = value
+    end
+})
+
+-- Create Teleport Tab
+local TeleportTab = Window:MakeTab({
+    Name = "Teleport",
+    Icon = "rbxassetid://4483345998",
+    PremiumOnly = false
+})
+
+-- List ng mga Coordinates
+local locations = {
+    Safezone = {x = -97.05, y = 3.89, z = -12.44},
+    Exit = {x = -279.09, y = 3.89, z = -125.41},
+    Board = {x = -201.53, y = 3.89, z = -161.29},
+    Cheese = {
+        {name = "Cheese1", x = -130.91, y = 3.89, z = -161.13},
+        {name = "Cheese2", x = -274.83, y = 3.89, z = -145.17},
+        {name = "Cheese3", x = -272.92, y = 3.89, z = -55.07},
+        {name = "Cheese4", x = -275.23, y = 3.89, z = -18.55},
+        {name = "Cheese5", x = -253.24, y = 48.20, z = -163.58},
+        {name = "Cheese6", x = 73.76, y = 3.70, z = -452.19},
+        {name = "Cheese7", x = 41.12, y = 24.20, z = -23.46},
+        {name = "Cheese8", x = -275.10, y = 48.20, z = -217.34},
+        {name = "Cheese9", x = -148.18, y = 3.89, z = -231.76}
+    },
+    Keys = {
+        {name = "Green Key", x = -275.72, y = 3.89, z = -37.06},
+        {name = "Red Key", x = 69.36, y = 3.70, z = -450.09},
+        {name = "Blue Key", x = -112.60, y = 46.60, z = -87.47}
+    },
+    Doors = {
+        {name = "Green Door", x = -207.19, y = 3.89, z = -186.65},
+        {name = "Red Door", x = -201.26, y = 3.89, z = -148.71},
+        {name = "Blue Door", x = -261.25, y = 48.20, z = -177.70}
+    }
+}
+
+-- Function to create a button for each location
+local function createTeleportButton(name, coordinates)
+    TeleportTab:AddButton({
+        Name = "Teleport to " .. name,
+        Callback = function()
+            local Player = game.Players.LocalPlayer
+            local Character = Player.Character or Player.CharacterAdded:Wait()
+            local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart")
+            HumanoidRootPart.CFrame = CFrame.new(coordinates.x, coordinates.y, coordinates.z)
+        end
+    })
+end
+
+-- Create buttons for non-sectioned locations (Safezone, Exit Door, Board/Plank)
+createTeleportButton("Safezone", locations.Safezone)
+createTeleportButton("Exit Door", locations.Exit)
+createTeleportButton("Board/Plank", locations.Board)
+
+-- Create Section for Cheese Locations
+TeleportTab:AddSection({
+    Name = "Section: Cheese"
+})
+for _, cheese in ipairs(locations.Cheese) do
+    createTeleportButton(cheese.name, cheese)
+end
+
+-- Create Section for Keys Locations
+TeleportTab:AddSection({
+    Name = "Section: Keys"
+})
+for _, key in ipairs(locations.Keys) do
+    createTeleportButton(key.name, key)
+end
+
+-- Create Section for Doors Locations
+TeleportTab:AddSection({
+    Name = "Section: Doors"
+})
+for _, door in ipairs(locations.Doors) do
+    createTeleportButton(door.name, door)
+end
+
+-- Create Credits Tab
+local CreditsTab = Window:MakeTab({
+    Name = "Credits",
+    Icon = "rbxassetid://4483345998",
+    PremiumOnly = false
+})
+
+-- Add Credits Information
+CreditsTab:AddLabel("Made by AcxScripter")
+
+-- Create a button to toggle the UI visibility
+local toggleButton = Instance.new("TextButton")
+toggleButton.Name = "ToggleUI"
+toggleButton.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+toggleButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+toggleButton.BackgroundTransparency = 0.5
+toggleButton.Position = UDim2.new(0, 0, 0.45, 0)
+toggleButton.Size = UDim2.new(0, 50, 0, 50)
+toggleButton.Text = "UI"
+
+-- Add corner radius for the button
+local corner = Instance.new("UICorner")
+corner.CornerRadius = UDim.new(0.2, 0)
+corner.Parent = toggleButton
+
+-- Function to toggle the UI visibility
+toggleButton.MouseButton1Click:Connect(function()
+    if Window.Enabled then
+        Window.Enabled = false
+    else
+        Window.Enabled = true
+    end
+end)
+
+-- Initialize UI
+OrionLib:Init()
