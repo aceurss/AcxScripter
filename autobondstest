@@ -1,0 +1,155 @@
+--// Settings
+getgenv().BondFarmSetting = {
+    tweenDuration = 14, -- Teleport speed, minimum 13
+    AutoExecute = true, -- Auto run when teleport to new server
+    CheckMissedBonds = false
+}
+
+--// Auto re-execute when teleporting to new server
+if getgenv().BondFarmSetting.AutoExecute then
+    local queue = queue_on_teleport or syn and syn.queue_on_teleport
+    if queue then
+        queue(game:HttpGet("https://raw.githubusercontent.com/aceurss/BypassALink/main/test"))
+    else
+        warn("queue_on_teleport not supported")
+    end
+end
+
+--// Services
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local StarterGui = game:GetService("StarterGui")
+local player = Players.LocalPlayer
+local playerGui = player:WaitForChild("PlayerGui")
+
+--// UI Setup
+local function createOverlay()
+    if playerGui:FindFirstChild("BondFarmOverlay") then return end -- Prevent double UI
+
+    local screenGui = Instance.new("ScreenGui")
+    screenGui.Name = "BondFarmOverlay"
+    screenGui.ResetOnSpawn = false
+    screenGui.IgnoreGuiInset = true
+    screenGui.DisplayOrder = 999999
+    screenGui.Parent = playerGui
+
+    local blackFrame = Instance.new("Frame")
+    blackFrame.Size = UDim2.new(1, 0, 1, 0)
+    blackFrame.Position = UDim2.new(0, 0, 0, 0)
+    blackFrame.BackgroundColor3 = Color3.new(0, 0, 0)
+    blackFrame.ZIndex = 0
+    blackFrame.Parent = screenGui
+
+    local rainbowLabel = Instance.new("TextLabel")
+    rainbowLabel.Size = UDim2.new(1, 0, 0.1, 0)
+    rainbowLabel.Position = UDim2.new(0, 0, 0.02, 0)
+    rainbowLabel.BackgroundTransparency = 1
+    rainbowLabel.Text = "AUTOBONDSV2"
+    rainbowLabel.Font = Enum.Font.SpecialElite
+    rainbowLabel.TextSize = 50
+    rainbowLabel.TextColor3 = Color3.fromRGB(255, 0, 0)
+    rainbowLabel.ZIndex = 2
+    rainbowLabel.TextStrokeTransparency = 0
+    rainbowLabel.Parent = screenGui
+
+    task.spawn(function()
+        while screenGui.Parent do
+            for hue = 0, 1, 0.01 do
+                rainbowLabel.TextColor3 = Color3.fromHSV(hue, 1, 1)
+                task.wait(0.02)
+            end
+        end
+    end)
+
+    local titleLabel = Instance.new("TextLabel")
+    titleLabel.Size = UDim2.new(1, 0, 0.1, 0)
+    titleLabel.Position = UDim2.new(0, 0, 0.17, 0)
+    titleLabel.BackgroundTransparency = 1
+    titleLabel.Text = "MADE BY ACXTHESCRIPTER"
+    titleLabel.Font = Enum.Font.SpecialElite
+    titleLabel.TextSize = 60
+    titleLabel.TextColor3 = Color3.fromRGB(255, 0, 0)
+    titleLabel.ZIndex = 2
+    titleLabel.TextStrokeTransparency = 0
+    titleLabel.Parent = screenGui
+
+    local subText = Instance.new("TextLabel")
+    subText.Size = UDim2.new(1, 0, 0.1, 0)
+    subText.Position = UDim2.new(0, 0, 0.45, 0)
+    subText.BackgroundTransparency = 1
+    subText.Text = "PLEASE WAIT 3 SECONDS"
+    subText.Font = Enum.Font.Antique
+    subText.TextSize = 40
+    subText.TextColor3 = Color3.fromRGB(255, 255, 255)
+    subText.ZIndex = 2
+    subText.TextStrokeTransparency = 0
+    subText.Parent = screenGui
+
+    task.delay(3, function()
+        subText.Text = "COLLECTING BONDS..."
+        subText.TextColor3 = Color3.fromRGB(144, 238, 144)
+    end)
+
+    local disclaimerText = Instance.new("TextLabel")
+    disclaimerText.Size = UDim2.new(1, 0, 0.1, 0)
+    disclaimerText.Position = UDim2.new(0, 0, 0.9, 0)
+    disclaimerText.BackgroundTransparency = 1
+    disclaimerText.Text = "Note: Once you die, the script will automatically rejoin you to new server after a short wait. Leave from game if you want to stop."
+    disclaimerText.Font = Enum.Font.SourceSans
+    disclaimerText.TextSize = 20
+    disclaimerText.TextColor3 = Color3.fromRGB(255, 255, 255)
+    disclaimerText.TextWrapped = true
+    disclaimerText.ZIndex = 2
+    disclaimerText.Parent = screenGui
+end
+
+--// Load Bond Farm Script
+local function loadBondFarmScript()
+    task.spawn(function()
+        task.wait(3)
+        loadstring(game:HttpGet('https://raw.githubusercontent.com/DonjoScripts/Public-Scripts/refs/heads/Slap-Battles/TheFastestBondStealer.lua'))()
+        print("[BondFarm] Script loaded!")
+    end)
+end
+
+--// Start overlay + farming
+createOverlay()
+StarterGui:SetCore("SendNotification", {
+    Title = "AcxTheScripter",
+    Text = "It takes 1-2 minutes, please wait...",
+    Duration = 10
+})
+loadBondFarmScript()
+
+--// Auto replay if dead
+local function monitorEndScreen()
+    local endDecisionRemote = ReplicatedStorage:WaitForChild("Remotes"):WaitForChild("EndDecision")
+    endDecisionRemote.OnClientEvent:Connect(function()
+        StarterGui:SetCore("SendNotification", {
+            Title = "BOND FARM",
+            Text = "You died! Please wait 28 seconds to be teleported...",
+            Duration = 10
+        })
+
+        task.wait(1)
+        endDecisionRemote:FireServer(false)
+        print("[AutoQueue] Play Again pressed.")
+        task.wait(5)
+        loadBondFarmScript()
+    end)
+end
+task.spawn(monitorEndScreen)
+
+--// Auto load when respawn
+player.CharacterAdded:Connect(function(char)
+    char:WaitForChild("Humanoid").Died:Connect(function()
+        StarterGui:SetCore("SendNotification", {
+            Title = "BOND FARM",
+            Text = "You died! Please wait 10 seconds...",
+            Duration = 5
+        })
+    end)
+
+    task.wait(5)
+    loadBondFarmScript()
+end)
