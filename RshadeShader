@@ -1,8 +1,8 @@
 --[=[
 	[[open source code]]
-	thanks for using pshade ultimate
+	thanks for using Rpshade shader
 	
-	pshade is made by content creator on youtube called @Im_patrick feel free to subs
+	pshade is made by content creator on youtube called @AcxTheScripter feel free to subs
 	
 	some code might be obfuscated for privacy or security reason (example : feedback)
 	this is not mean to be edited/stolen
@@ -1082,11 +1082,11 @@ coroutine['wrap'](function() if httpget(src..'check.lua') then	return 	end end)(
 
 if file then
 	if not file("pshade/welcome") then
-		write('pshade/welcome','thanks for using pshade ultimate')
+		write('pshade/welcome','thanks for using Rpshade shader')
 		write('pshade/lan', 'en')
 		write('pshade/img', image['Image'])
-		setclip('https://youtu.be/-moZS7duKRk?si=3vLOmrO_OF6lAXll')
-	end
+		setclip('https://www.youtube.com/@AcxTheScripter')
+end
 	if file('pshade/img') then
 		image['Image']=read('pshade/img')
 	end
